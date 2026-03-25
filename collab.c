@@ -17,15 +17,14 @@ int main() {
     // Doubles (higher precisions than floats(15-16 decimal points))
     double pi = 3.14159265458979;
 
+    // Print statements (\n for newline)
+    printf("You are %d years old\n", age);    // The %d stands for a value
+    printf("The value of pi is %.8lf\n", pi); // %f for float
+    printf("Your grade was %c\n", grade);     // %c for char
+    printf("Your email is %s\n", email);      // etc etc
+
     // Booleans (1 byte)
     bool isAtHome = true;
-
-    // Print statements (\n for newline)
-    printf("You are %d years old\n", age);
-    printf("The value of pi is %.8lf\n", pi);
-    printf("Your grade was %c\n", grade);
-    printf("Your email is %s\n", email);
-
     // If statements
     if (isAtHome) {
         printf("You are at home\n");
