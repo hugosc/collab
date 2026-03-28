@@ -1,1 +1,238 @@
-/home/croc/Documents/brain2/concepts/c_fundamentals.org
+:PROPERTIES:
+:ID:       02ee33fd-9143-4ce2-8c52-832237afe8b8
+:END:
+#+TITLE: C Fundamentals
+#+FILETAGS: :concept:C:
+
+* [[pdf:../projects/.attach/ea/87ba9c-7053-4c88-be54-529ae2e5a25c/C Programming Language - 2nd Edition (OCR).pdf::9][1.1 Getting Started (9)]]
+:PROPERTIES:
+:ROAM_ALIASES: "c_fundamentals - [[pdf:../projects/.attach/ea/87ba9c-7053-4c88-be54-529ae2e5a25c/C Programming Language - 2nd Edition (OCR).pdf::9][1.1 Getting Started (9)]]"
+:END:
+
+Standard best practice is using C99, compilation with GCC. Running =gcc filename.c= will produce an a.out file, which can be run directly. Alternatively =gcc filename.c -o binaryname= will give an executable binary.
+
+All C programs start executing from the =main= function by default, with function scopes being enclosed in ={ }= braces.
+
+#+begin_src C :results output
+#include <stdio.h> // Importing the standard input/output library
+int main() // Function labelled main
+{
+    printf("hello, world\n"); // Calls printf, \n creates a newline
+}
+#+end_src
+
+* [[pdf:../projects/.attach/ea/87ba9c-7053-4c88-be54-529ae2e5a25c/C Programming Language - 2nd Edition (OCR).pdf::11][1.2 Variables and Arithmetic Expressions (11)]]
+
+This more complicated program uses declarations, variables, arithmetic expressions, loops, and formatted output. It converts temperatures from Fahrenheit to Celsius.
+
+| =int=     | regular whole number            |
+| =float=   | contains decimal point          |
+| =char=    | character - a single byte       |
+| =short=   | short integer                   |
+| =long=    | long integer                    |
+| =double=  | double-precision floating point |
+
+#+begin_src C :results output
+#include <stdio.h>
+int main()
+{
+    int fahr, celsius; // Declaration of vars
+    int lower, upper, step;
+    lower = 0;    // Lower limit of temperature table
+    upper = 100;  // Assignment statements (vars -> values)
+    step = 10;    // Step size
+    fahr = lower;
+    while (fahr <= upper) {
+        celsius = 5 * (fahr - 32) / 9;
+        printf("%3d %6d\n", fahr, celsius);
+        fahr = fahr + step;
+    }
+    return 0;
+}
+#+end_src
+/Uses integers for now/
+
+#+begin_src C
+    while (fahr <= upper) {
+        celsius = 5 * (fahr - 32) / 9;
+        printf("%3d %6d\n", fahr, celsius);
+        fahr = fahr + step;
+    }
+#+end_src
+
+The while loop operates as follows: The condition in parentheses is tested. If it is true (=fahr= is less than or equal to upper), the body of the loop (the three statements enclosed in braces) is executed. Then the condition is re-tested, and if true, the body is executed again. When the test becomes false (=fahr= exceeds upper) the loop ends, and execution continues at the statement that follows the loop. There are no further statements in this program, so it terminates.
+
+#+begin_src C
+celsius = 5 * (fahr - 32) / 9;
+// We multiply by 5 THEN divide by 9 because integer division truncates
+#+end_src
+
+We can do a more accurate version by using integers instead of floats:
+
+#+begin_src C :results output
+#include <stdio.h>
+int main()
+{
+    float fahr, celsius;
+    float lower, upper, step;
+    lower = 0;
+    upper = 100;
+    step = 10;
+    fahr = lower;
+    printf("Centimeters Inches\n");
+        // Cleaner algorithm, floats not truncated like ints
+    while (fahr <= upper) {
+        celsius = (5.0/9.0) * (fahr-32.0);
+        printf("%-3.0f        %6.1f\n", fahr, celsius);
+        fahr = fahr + step;
+    }
+    return 0;
+}
+#+end_src
+
+** Variant: CM to Inches
+
+#+begin_src C :results output
+#include <stdio.h>
+int main() {
+    float inches;
+    float centimeters;
+    float upper;
+    float lower;
+    float step;
+
+    upper = 100;
+    lower = 0;
+    step = 5;
+    centimeters = lower;
+
+    printf("Centimeters Inches\n");
+    while (centimeters <= upper) {
+         inches = centimeters / 2.54;
+         printf("%3.1f %3.1f\n", centimeters, inches);
+         centimeters = centimeters + step;
+    }
+}
+#+end_src
+
+* [[pdf:../projects/.attach/ea/87ba9c-7053-4c88-be54-529ae2e5a25c/C Programming Language - 2nd Edition (OCR).pdf::16][1.3 The for statement (16)]]
+
+=for= statements have three main components: the initialisation, the condition, and the increment. The initialisation is just done once, then the condition is checked and if so the increment follows.
+
+#+begin_src C :results output
+#include <stdio.h>
+int main() {
+    int fahr;
+/*            lower        upper             step     */
+
+    for (fahr = 0; fahr <= 300; fahr = fahr + 20) {
+        printf("%3d %6.1f\n", fahr, (5.0/9.0)*(fahr-32));
+/*                             Expression for celsius */
+
+        }
+
+}
+#+end_src
+
+=fahr= is defined as an =int=, while the upper and lower bounds remain as constants in the =for= statement. =fahr= is set to =0=, then fahr is checked against the upper bound and incremented if passes.
+
+* [[pdf:../projects/.attach/ea/87ba9c-7053-4c88-be54-529ae2e5a25c/C Programming Language - 2nd Edition (OCR).pdf::17][1.4 Symbolic Constants (17)]]
+
+#+begin_src C :results output
+#include <stdio.h>
+
+#define UPPER 300 // We can define symbolic constants (almost like aliases)
+#define LOWER 0 // NOT variables
+#define INCREMENT 10 // Convention for these is upper case
+int main() {
+    int fahr;
+
+    for (fahr = LOWER; fahr <= UPPER; fahr = fahr + INCREMENT)
+        printf("%3d %6.1f\n", fahr, (5.0/9.0)*(fahr-32));
+/*                             Expression for celsius */
+
+}
+#+end_src
+
+* [[pdf:../projects/.attach/ea/87ba9c-7053-4c88-be54-529ae2e5a25c/C Programming Language - 2nd Edition (OCR).pdf::18][1.5 Character Input and Output (18)]]
+
+Text input and output is fundamentally dealt with in streams of characters. Each stream is a sequence of characters divided into lines, lines defined by =\n= (newlines).
+
+The standard library provides several functions for reading or writing one character at a time, of which =getchar= and =putchar= are the simplest. Each time it is called, =getchar= reads the next input character from a text stream and returns that as its value. That is, after =c = getchar();= the variable =c= contains the next character of input.
+
+The function =putchar= prints a character each time it is called: =putchar(c);= prints the contents of the integer variable =c= as a character, usually on the screen. Calls to =putchar= and =printf= may be interleaved; the output will appear in the order in which the calls are made.
+
+The simplest example program utilising these features would be one that reads input and immediately prints it:
+
+#+begin_src C :results output
+#include <stdio.h>
+int main() {
+    int c; // character
+    c = getchar(); // c is result of input
+    while (c != EOF) { // while c is not EOF indicator
+        putchar(c); // putchar similar to printf
+        c = getchar(); // get next available input
+    }
+}
+#+end_src
+
+** [[pdf:../projects/.attach/ea/87ba9c-7053-4c88-be54-529ae2e5a25c/C Programming Language - 2nd Edition (OCR).pdf::18][1.5.1 File Copying (18)]]
+
+An even simpler implementation of the i/o above would use a while loop, in which the expression assigning =c= to =getchar();= can be made part of a larger expression. =int= is used instead of =char= because although we will be reading characters, =c= also needs to at some point contain EOF, and EOF is larger than a single character, therefore =int= is used for its larger size.
+
+#+begin_src C :results output
+#include <stdio.h>
+int main() {
+    int c;
+    while ((c = getchar()) != EOF) { // While c (the result of what getchar returns) is not equal to EOF
+        putchar(c);
+    }
+}
+#+end_src
+
+** [[pdf:../projects/.attach/ea/87ba9c-7053-4c88-be54-529ae2e5a25c/C Programming Language - 2nd Edition (OCR).pdf::20][1.5.2 Character Counting (20)]]
+
+In this example, we use a =while= loop to detect whether a character is is EOF and if not increment a =count=, allowing us to press a bunch of keys and get a char count. We use a =long= because a regular integer could be too small for this application (on some machines).
+
+#+begin_src C :results output
+#include <stdio.h>
+int main() {
+    long count;
+    count = 0;
+    while (getchar() != EOF)
+        ++count; // Increment by one
+    printf("%ld\n", count);
+}
+#+end_src
+
+Second version with a =for= loop:
+
+#+begin_src C :results output
+#include <stdio.h>
+int main() {
+    double count; // Possibly deal with even larger numbers
+    for (count = 0; getchar() != EOF; ++count)
+        ;
+    printf("%.0f\n", count);
+}
+#+end_src
+
+The body of this one is empty due to the important work being covered in the test and increment sections.
+
+/'Before we leave the character counting program, observe that if the input contains no characters, the =while= or =for= test fails on the very first call to =getchar=, and the program produces zero, the right answer. This is important. One of the nice things about =while= and =for= is that they test at the top of the loop, before proceeding with the body. If there is nothing to do, nothing is done, even if that means never going through the loop body. Programs should act intelligently when given zero-length input. The =while= and =for= statements help ensure that programs do reasonable things with boundary conditions.'/
+
+** [[pdf:../projects/.attach/ea/87ba9c-7053-4c88-be54-529ae2e5a25c/C Programming Language - 2nd Edition (OCR).pdf::21][1.5.3 Line Counting (21)]]
+
+This next program will count input lines.
+
+** [[pdf:../projects/.attach/ea/87ba9c-7053-4c88-be54-529ae2e5a25c/C Programming Language - 2nd Edition (OCR).pdf::22][1.5.4 Word Counting (22)]]
+
+* [[pdf:../projects/.attach/ea/87ba9c-7053-4c88-be54-529ae2e5a25c/C Programming Language - 2nd Edition (OCR).pdf::23][1.6 Arrays (23)]]
+
+* [[pdf:../projects/.attach/ea/87ba9c-7053-4c88-be54-529ae2e5a25c/C Programming Language - 2nd Edition (OCR).pdf::25][1.7 Functions (25)]]
+
+* [[pdf:../projects/.attach/ea/87ba9c-7053-4c88-be54-529ae2e5a25c/C Programming Language - 2nd Edition (OCR).pdf::28][1.8 Arguments - Call by Value (28)]]
+
+* [[pdf:../projects/.attach/ea/87ba9c-7053-4c88-be54-529ae2e5a25c/C Programming Language - 2nd Edition (OCR).pdf::29][1.9 Character Arrays (29)]]
+
+* [[pdf:../projects/.attach/ea/87ba9c-7053-4c88-be54-529ae2e5a25c/C Programming Language - 2nd Edition (OCR).pdf::31][1.10 External Variables and Scope (31)]]
