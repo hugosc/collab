@@ -3,7 +3,7 @@
 
 int main() {
     // Integers (4 bytes)
-    int age = 20;
+    int age = 33;
 
     // Floating Point numbers (4 bytes)
     float grams = 1.1;
