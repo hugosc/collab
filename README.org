@@ -50,6 +50,7 @@ int main()
     return 0;
 }
 #+end_src
+
 /Uses integers for now/
 
 #+begin_src C
@@ -103,7 +104,7 @@ int main() {
 
     upper = 100;
     lower = 0;
-    step = 5;
+    step = 3;
     centimeters = lower;
 
     printf("Centimeters Inches\n");
@@ -225,11 +226,191 @@ The body of this one is empty due to the important work being covered in the tes
 
 This next program will count input lines.
 
+#+begin_src C :results output
+#include <stdio.h>
+int main() {
+    int c, increment;
+    increment = 0;
+    while ((c = getchar()) != EOF) {
+        if (c == '\n') // == is an equality test instead of = (used for testing assignment)
+            ++increment;
+        printf("%d\n", increment);
+    }
+}
+#+end_src
+
+A character in single quotes is used to represent the integer value of the character in the machine's character set. This is called a /character constant/ although it is just another way to write a small =int=. For example, '=A=' is a character constant, and in ASCII character set is 65. The internal representation is =A=. =A= is easier than 65, due to semantics and independence from character sets. The escape sequences used in string constants (like =\n=) are also legal in character constants. The value of the newline character (it is treated as a single character, and in expressions just an integer) is 10 in ASCII. Writing ='\n'= is a string constant that *happens* to contain only one character.
+
+*** Example - Counting blanks, tabs, and newlines
+
+#+begin_src C :results output
+#include <stdio.h>
+int main() {
+    int c, increment;
+    increment = 0;
+    while((c = getchar()) != EOF) {
+        if (c==' ' || c == '\n' || c== '\t')
+            ++increment;
+        printf("%d", increment);
+
+    }
+}
+#+end_src
+
+- Only one counter (=increment=) for all types; doesn't track blanks, tabs, and newlines separately
+- Prints count every loop iteration instead of once at the end
+- No clear labels in output; results may be unclear
+
+  #+begin_src C :results output
+// V2
+#include <stdio.h>
+int main() {
+    int c, sc, nlc, tc;
+    sc = nlc = tc = 0;
+    while((c = getchar()) != EOF) {
+        if (c==' ')
+            ++sc;
+        if (c=='\n')
+            ++nlc;
+        if (c=='\t')
+            ++tc;
+    }
+    printf("Spaces\tNLs\t\tTabs\n");
+    printf("%d\t\t%d\t\t%d", sc, nlc, tc);
+}
+  #+end_src
+
+- This version now counts them independently
+- Prints at EOF (can be simulated with C-d)
+- Labelled output
+
 ** [[pdf:../projects/.attach/ea/87ba9c-7053-4c88-be54-529ae2e5a25c/C Programming Language - 2nd Edition (OCR).pdf::22][1.5.4 Word Counting (22)]]
+
+This program will use previous knowledge to count words. In this scenario we can loosely define a word as a sequence of characters that *does not* contain blank, tab, newline, or period.
+
+#+begin_src C :results output
+#include <stdio.h>
+#define IN 1
+#define OUT 0
+int main() {
+    int c, cc, nlc, sc, wc, state;
+    state = OUT;
+    sc = nlc = cc = wc = 0;
+    while ((c=getchar()) != EOF){
+        ++cc;
+        if (c == ' ' || c== '\n' || c=='\t')
+            state = OUT;
+        else if (state == OUT) {
+            state = IN;
+            ++wc;
+        }
+    }
+    printf("Chars\t\tNewlines\tWords\n", cc, nlc, wc);
+    printf("%d\t\t%d\t\t%d\n", cc, nlc, wc);
+
+}
+#+end_src
+
+This program works by tracking whether it is =IN= or =OUT= of a word. After setting starting states of stuff, we iterate over characters and every time we find characters (or lack thereof) that indicate *not* being in a word, we set =state= to =OUT=, otherwise if we don't see any of the 'blacklisted' characters AND we haven't realised we're in a word yet, we set =state= to =IN=.
 
 * [[pdf:../projects/.attach/ea/87ba9c-7053-4c88-be54-529ae2e5a25c/C Programming Language - 2nd Edition (OCR).pdf::23][1.6 Arrays (23)]]
 
+This program will count number of occurrences of each digit (0-9), of whitespace chars (blank, tab, newline), and of all other characters. This is artificial but a good learning excercise.
+
+#+begin_src C :results output
+#include <stdio.h>
+
+int main() {
+    int inputChar,
+        index; // Variables to hold the current input character and loop index
+    int whiteCount,
+        otherCharCount; // Counters for spaces (whitespace) and other characters
+    int digitCounts[10]; // 10 integers big
+    // Initialise the counters for spaces and other characters to zero
+    whiteCount = 0;
+    otherCharCount = 0;
+
+    // Set each digit counter to zero before counting
+    for (index = 0; index < 10; ++index) // Loops over index setting all to 0
+        digitCounts[index] = 0; // Sets value at that position in array to 0
+
+    // Read characters from user input one by one until End Of File (EOF)
+    while ((inputChar = getchar()) != EOF) {
+
+        // Check if the input character is a digit ('0', '1', ..., '9')
+        if (inputChar >= '0' && inputChar <= '9') {
+            // Increase the counter for that specific digit
+            // Subtracting '0' gives the number value of the digit, so '3'-'0' = 3
+            digitCounts[inputChar - '0']++;
+        }
+
+        // Check if the character is a space, newline or tab (whitespace)
+        else if (inputChar == ' ' || inputChar == '\n' || inputChar == '\t') {
+            // Increase the whitespace counter
+            whiteCount++;
+        }
+
+        // If the character is not a digit and not whitespace, it's an 'other'
+        // character
+        else {
+            // Increase the count of other characters
+            otherCharCount++;
+        }
+    }
+
+    // Output: print digit counts
+    printf("digits =");
+    for (index = 0; index < 10; ++index)
+        printf(" %d", digitCounts[index]); // Loops over index printing the count of each digit inside
+
+    // Output: print how many whitespace and other characters were found
+    printf(", white space = %d, other = %d\n", whiteCount, otherCharCount);
+
+    return 0;
+}
+#+end_src
+
+In this code, the =digitCounts= variable is an array of integers that is 10 big. The array starts at 0 and therefore goes to 9. The variable =index= is just something we'll use when accessing a specific place in that array. If =index= is 3, then doing =digitCounts[index]= will return the same as =digitCounts[3]=. =index= is NOT used to contain the *number* of times a given integer appears. So if =digitCounts[4]= is 3, and =index= is 4, then =digitCounts[index]= will return 4.
+
 * [[pdf:../projects/.attach/ea/87ba9c-7053-4c88-be54-529ae2e5a25c/C Programming Language - 2nd Edition (OCR).pdf::25][1.7 Functions (25)]]
+
+A function is a way to 'encapsulate' some computation, which can then be used without worrying about the implementation. Functions used so far have included =printf=, =getchar= and so on. Function definitions have the following form:
+
+#+begin_src
+return-type function-name(parameter declarations, if any)
+{
+    declarations
+    statements
+}
+#+end_src
+
+Here is an example function called =power= and also a main program:
+
+#+begin_src C :results output raw
+#include <stdio.h>
+
+// Function prototype: calculates base raised to exponent
+int power(int base, int exponent);
+
+int main() {
+    int i;
+    // Print a table of exponents for 2 and -3
+    printf("| int | int^{2} | int^{3} |\n|- |- |- |\n"); // Org table formatting
+    for (i = 1; i < 10; ++i)
+        printf("| %d | %d | %d |\n", i, power(2, i), power(-3, i));
+    return 0;
+}
+
+// Actual function
+int power(int base, int exponent) {
+    int i, result;
+    result = 1;
+    for (i = 1; i <= exponent; ++i)
+        result = result * base;
+    return result;
+}
+
+#+end_src
 
 * [[pdf:../projects/.attach/ea/87ba9c-7053-4c88-be54-529ae2e5a25c/C Programming Language - 2nd Edition (OCR).pdf::28][1.8 Arguments - Call by Value (28)]]
 
