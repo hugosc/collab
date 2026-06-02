@@ -7,8 +7,8 @@ int main() {
     sc = nlc = cc = wc = 0;
     while ((c = getchar()) != EOF) { // While not in end of file
         ++cc;
-        if (c == ' ' || c == '\n' || c == '\t' ||
-            c == '.') // If any of these we are not in a word
+        if (c == ' ' || c == '\n' || c == '\t' || c == '.' || c >= '0' ||
+            c <= '9') // If any of these we are not in a word
             state = OUT;
         else if (state == OUT) {
             state = IN;
