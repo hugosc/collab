@@ -1,9 +1,8 @@
+#include "copy.h"
 #include <stdio.h>
 #define MAXLINE 1000 // Define symbolic constant
 
 int lineget(char line[], int maxline);
-void copy(char to[], char from[]);
-/* Prototyping of functions */
 
 int main() {
     int len;
@@ -47,9 +46,3 @@ int lineget(char store[], int lim) { // Takes an array of characters and a limit
 }
 /* Although copy returns nothing, we can use it on the local vars of ANOTHER
  * function, as we do in main */
-void copy(char to[], char from[]) {
-    int i;
-    i = 0;
-    while ((to[i] = from[i]) != '\0')
-        ++i;
-}
